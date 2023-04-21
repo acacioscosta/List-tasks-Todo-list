@@ -6,7 +6,7 @@ import styles from './styles';
 
 type Option = {
   label: string
-  value: number
+  value: string
   icon: string
 }
 
@@ -36,7 +36,7 @@ const RadioList = (props: Props) => {
         >
           <View style={styles.view_icon_left}>
             <Feather
-              name={option.icon}
+              name={option.icon as any}
               size={28}
               color={colors.primary}
             />

@@ -1,7 +1,7 @@
-import { Text, TextStyle, TouchableOpacity } from 'react-native'
+import { Text, TextStyle, TouchableOpacity, TouchableOpacityProps } from 'react-native'
 import { colors } from '../../../global_styles'
 
-type Props = {
+interface Props extends TouchableOpacityProps {
   label: string
   type: 'primary' | 'secondary'
   onPress: () => void
@@ -43,6 +43,7 @@ const Button = (props: Props) => {
 
   return (
     <TouchableOpacity
+      {...props}
       onPress={onPress}
       style={mapStyles[type]['button'] as TextStyle}
     >

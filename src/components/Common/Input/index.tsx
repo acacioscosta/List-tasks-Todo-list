@@ -1,4 +1,3 @@
-import React from "react";
 import { TextInput, TextInputProps } from "react-native";
 import { colors } from "../../../global_styles";
 
@@ -10,6 +9,7 @@ const Input = (props: Props) => {
   return (
     <TextInput
       {...props}
+      onChangeText={props.onChangeText}
       placeholderTextColor={props.placeholderTextColor ? props.placeholderTextColor : colors.secondary}
       style={[
         {
