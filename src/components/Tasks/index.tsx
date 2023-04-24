@@ -2,16 +2,18 @@ import { View, Text, FlatList } from 'react-native'
 import Card from '../Card'
 import styles from './styles'
 
-export default function Tasks() {
-  const tasks = [
-    { description: 'Feira Abril', category: 'Compras' },
-    { description: 'Lembrancinhas Antonella', category: 'Geral' },
-    { description: 'Sábado', category: 'Geral' },
-    { description: 'Feira Abril', category: 'Compras' },
-    { description: 'Lembrancinhas Antonella', category: 'Geral' },
-    { description: 'Sábado', category: 'Geral' },
-  ]
+type Task = {
+  description: string
+  category: string
+}
 
+type Props = {
+  tasks: Task[]
+}
+
+export { Task }
+
+export default function Tasks(props: Props) {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
@@ -19,7 +21,7 @@ export default function Tasks() {
       </Text>
 
       <FlatList
-        data={tasks}
+        data={props.tasks}
         renderItem={({ item }) => <Card task={item} />}
       />
     </View>

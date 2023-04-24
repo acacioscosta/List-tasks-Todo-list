@@ -5,7 +5,7 @@ import RadioList from "../../components/RadioList";
 import Button from "../../components/Common/Button";
 import { useNavigation } from "@react-navigation/native";
 import { StackTypes } from "../../routes";
-import { store_data } from "../../services/storage";
+import { store_task } from "../../services/storage";
 
 export default function AddTask() {
   const { navigate } = useNavigation<StackTypes>()
@@ -26,7 +26,13 @@ export default function AddTask() {
       )
     }
 
-    await store_data('')
+    await store_task({
+      key: 'tasks',
+      value: {
+        description: task_name,
+        category: category_selected
+      }
+    })
 
     const screen = category_selected === 'general' ? 'TaskGeneral' : 'TaskShopping'
 
