@@ -52,15 +52,16 @@ export default function TaskGeneral() {
     params?.items && setTasks(params.items)
   }, [])
 
-  const save = () => {
+  const save = async () => {
     const newData = description
       ? [...tasks, { description, done: false }]
       : tasks    
     
+    await setStorage(newData)
+    
     setTasks(newData)
     setDescription('')
     setShow(false)
-    setStorage(newData)
   }
 
   const setStorage = async (data: GeneralItem[]) => {
@@ -79,16 +80,18 @@ export default function TaskGeneral() {
 
     const tasks_sorted = sortByDone(new_tasks)
 
+    await setStorage(tasks_sorted)
+
     setTasks(tasks_sorted)
-    setStorage(tasks_sorted)
   }
 
-  const remove = (index: number) => {
+  const remove = async (index: number) => {
     const new_tasks = tasks.slice()
     new_tasks.splice(index, 1)
 
+    await setStorage(new_tasks)
+
     setTasks(new_tasks)
-    setStorage(new_tasks)
   }
 
   const sortByDone = (tasks: GeneralItem[]) => {
@@ -143,7 +146,7 @@ export default function TaskGeneral() {
           setShow(false)
           setDescription('')
         }}
-        onPress={() => save()}
+        onPress={save}
         onChangeText={(text: string) => setDescription(text)}
       />
     </View>
