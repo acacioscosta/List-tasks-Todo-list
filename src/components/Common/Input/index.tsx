@@ -1,9 +1,7 @@
 import { TextInput, TextInputProps } from "react-native";
 import { colors } from "../../../global_styles";
 
-interface Props extends TextInputProps {
-  style?: object;
-}
+interface Props extends TextInputProps {}
 
 const Input = (props: Props) => {
   return (

@@ -6,6 +6,7 @@ import Home from '../screens/Home'
 import TaskGeneral from '../screens/TaskGeneral'
 import TaskShopping from '../screens/TaskShopping'
 import AddTask from '../screens/AddTask'
+import { GeneralItem, ShoppingItem } from '../components/Tasks'
 
 const Stack = createNativeStackNavigator()
 
@@ -14,9 +15,13 @@ type StackNavigation = {
   AddTask: undefined;
   TaskGeneral: {
     title: string
+    id: number
+    items?: GeneralItem[]
   };
   TaskShopping: {
     title: string
+    id: number
+    items?: ShoppingItem[]
   }
 }
 

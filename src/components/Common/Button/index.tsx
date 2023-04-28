@@ -1,43 +1,24 @@
-import { Text, TextStyle, TouchableOpacity, TouchableOpacityProps } from 'react-native'
-import { colors } from '../../../global_styles'
+import { Text, TextStyle, TouchableOpacity, TouchableOpacityProps, View } from 'react-native'
+import styles from './styles'
 
 interface Props extends TouchableOpacityProps {
   label: string
   type: 'primary' | 'secondary'
   onPress: () => void
+  textStyle?: TextStyle,
 }
 
 const Button = (props: Props) => {
-  const { label, type, onPress } = props
+  const { label, type, onPress, style, textStyle, children } = props
 
   const mapStyles = {
     'primary': {
-      'button': {
-        backgroundColor: colors.secondary,
-        padding: 12,
-        alignItems: 'center',
-        borderRadius: 6
-      },
-      'text': {
-        color: colors.primary,
-        fontSize: 22,
-        fontWeight: 'bold'
-      }
+      'button': styles.primary_button,
+      'text': styles.primary_text_button
     },
     'secondary': {
-      'button': {
-        backgroundColor: colors.primary,
-        padding: 12,
-        alignItems: 'center',
-        borderRadius: 6,
-        marginTop: 22
-      },
-      'text': {
-        color: colors.secondary,
-        fontSize: 20,
-        fontWeight: '300',
-        fontStyle: 'italic'
-      }
+      'button': styles.secondary_button,
+      'text': styles.secondary_text_button
     }
   }
 
@@ -45,11 +26,15 @@ const Button = (props: Props) => {
     <TouchableOpacity
       {...props}
       onPress={onPress}
-      style={mapStyles[type]['button'] as TextStyle}
+      style={[mapStyles[type]['button'] as TextStyle, style]}
     >
-      <Text style={mapStyles[type]['text'] as TextStyle}>
-        {label}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={[mapStyles[type]['text'] as TextStyle, textStyle ]}>
+          {label}
+        </Text>
+
+        {children}
+      </View>
     </TouchableOpacity>
   )
 }

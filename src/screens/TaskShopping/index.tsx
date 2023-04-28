@@ -1,13 +1,13 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackTypes, TaskRouteProp } from "../../routes";
+import { StackTypes, TaskShoppingRouteProp } from "../../routes";
 import { useEffect } from "react";
 import { Ionicons } from '@expo/vector-icons'
 import styles from "./styles";
 
 export default function Task() {
   const { setOptions, reset } = useNavigation<StackTypes>()
-  const { params } = useRoute<TaskRouteProp>()
+  const { params } = useRoute<TaskShoppingRouteProp>()
 
   useEffect(() => {
     setOptions({

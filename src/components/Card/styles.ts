@@ -24,6 +24,21 @@ const styles = StyleSheet.create({
     fontStyle: 'italic'
   },
 
+  view_status: {
+    backgroundColor: colors.secondary,
+    paddingVertical: 2,
+    width: 80,
+    borderRadius: 16,
+  },
+
+  text_view_status: {
+    fontSize: 16,
+    color: colors.primary,
+    fontWeight: '600',
+    fontStyle: 'italic',
+    textAlign: 'center'
+  },
+
   title: {
     fontSize: 28,
     color: colors.secondary,

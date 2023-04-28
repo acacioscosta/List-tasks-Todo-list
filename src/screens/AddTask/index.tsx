@@ -6,14 +6,11 @@ import Button from "../../components/Common/Button";
 import { useNavigation } from "@react-navigation/native";
 import { StackTypes } from "../../routes";
 import { store_task } from "../../services/storage";
+import { MapCategoryScreen, Categories } from "../../services/categories";
+import { Feather, MaterialIcons } from '@expo/vector-icons'
 
 export default function AddTask() {
   const { navigate } = useNavigation<StackTypes>()
-
-  const categories = [
-    { label: 'Compras', value: 'shopping', icon: 'shopping-cart' },
-    { label: 'Geral', value: 'general', icon: 'list' }
-  ]
 
   let task_name = ''
   let category_selected = ''
@@ -26,15 +23,19 @@ export default function AddTask() {
       )
     }
 
+    const id = new Date().getTime()
+
     await store_task({
       key: 'tasks',
       value: {
+        id,
         description: task_name,
-        category: category_selected
+        category: category_selected,
+        items: []
       }
     })
 
-    const screen = category_selected === 'general' ? 'TaskGeneral' : 'TaskShopping'
+    const screen = MapCategoryScreen[category_selected] as any
 
     navigate(screen, { title: task_name })
   }
@@ -51,7 +52,7 @@ export default function AddTask() {
       </Text>
 
       <RadioList
-        options={categories}
+        options={Categories}
         onSelect={item => category_selected = item.value}
       />
 
@@ -59,13 +60,26 @@ export default function AddTask() {
         onPress={add}
         label="ADICIONAR"
         type="primary"
-      />
+      >
+        <Feather
+          name="plus-circle"
+          size={24}
+          style={{ marginLeft: 10 }}
+        />
+      </Button>
 
       <Button
         onPress={() => navigate('Home')}
         label="Cancelar"
         type="secondary"
-      />
+      >
+        <MaterialIcons
+          name="cancel"
+          color={'white'}
+          size={24}
+          style={{ marginLeft: 10 }}
+        />
+      </Button>
     </View>
   )
 }

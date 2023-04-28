@@ -1,42 +1,84 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Alert } from "react-native";
 import styles from "./styles";
-
-type TaskProps = {
-  description: string;
-  category: string;
-}
+import { MapCategoryScreen, MapCategoryTitle } from "../../services/categories";
+import { Task } from "../Tasks";
+import { useNavigation } from "@react-navigation/native";
+import { StackTypes } from "../../routes";
+import CustomPressable from "../Common/Pressable";
+import { remove_task } from "../../services/storage";
 
 type Props = {
-  task: TaskProps
+  task: Task,
+  onRemove: () => void
 }
 
-type MapCategory = {
-  [key: string]: string
-}
+const Card = ({ task, onRemove }: Props) => {
+  const { navigate } = useNavigation<StackTypes>()
 
-const Card = ({ task }: Props) => {
-  const mapCategory: MapCategory = {
-    'general': 'Geral',
-    'shopping': 'Compras'
+  const getInfo = () => {
+    let complete = 0
+
+    for (const item of task.items) {
+      item.done && complete++
+    }
+
+    return complete + ' / ' + task.items.length
+  }
+
+  const handleTask = (item: Task) => {
+    const screen = MapCategoryScreen[item.category] as any
+
+    navigate(screen, {
+      id: item.id,
+      title: item.description,
+      items: item.items
+    })
+  }
+
+  const removeTask = async (id: number) => {
+    await remove_task(id)
+    
+    onRemove()
   }
 
   return (
-    <View style={styles.container}>
-      <View style={styles.view_category}>
-        <Text style={styles.text_view_category}>
-          {mapCategory[task.category]}
-        </Text>
+    <CustomPressable
+      onPress={() => handleTask(task)}
+      onLongPress={() => (
+        Alert.alert(
+          'Remover lista',
+          `Deseja remover a lista "${task.description}"?`,
+          [
+            {
+              text: 'NÃO',
+              onPress: () => {},
+              style: 'cancel',
+            },
+            {text: 'SIM', onPress: () => removeTask(task.id)},
+          ]
+        )
+      )}
+      customStyle={styles.container}
+    >
+      <View>
+        <View style={styles.view_category}>
+          <Text style={styles.text_view_category}>
+            {MapCategoryTitle[task.category]}
+          </Text>
 
-        <Text style={styles.text_view_category}>
-          5/8
+          <View style={styles.view_status}>
+            <Text style={styles.text_view_status}>
+              {getInfo()}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={styles.title}>
+          {task.description}
         </Text>
       </View>
-
-      <Text style={styles.title}>
-        {task.description}
-      </Text>
-    </View>
+    </CustomPressable>
   )
 }
 

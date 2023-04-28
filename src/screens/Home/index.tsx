@@ -10,14 +10,18 @@ export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([])
 
   useEffect(() => {
-    (async () => {
-      const tasks_storage = await get_data('tasks')
-
-      tasks_storage && tasks_storage.length
-        ? setTasks(tasks_storage)
-        : setTasks([])
-    })()
+    loadTasksStorage()
   }, [])
+
+  const loadTasksStorage = async () => {
+    const tasks_storage = await get_data('tasks')
+
+    tasks_storage && tasks_storage.length
+      ? setTasks(tasks_storage)
+      : setTasks([])
+  }
+
+  const handleRemoveTask = async () => await loadTasksStorage()
 
   const renderComponents = () => {
     if (!tasks.length) {
@@ -28,7 +32,10 @@ export default function Home() {
       <>
         <ButtonAddTask />
 
-        <Tasks tasks={tasks} />
+        <Tasks
+          tasks={tasks}
+          onRemove={handleRemoveTask}
+        />
       </>
     )
   }

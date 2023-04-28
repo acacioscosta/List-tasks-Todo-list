@@ -10,7 +10,7 @@ export default function ButtonAddTask() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>
-        Adicionar nova lista
+        Adicionar lista
       </Text>
 
       <View style={styles.view_button}>

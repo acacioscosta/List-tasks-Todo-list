@@ -1,8 +1,14 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { GeneralItem, ShoppingItem, Task } from '../../components/Tasks';
 
 type Store = {
   key: string,
   value: string | object
+}
+
+type StoreItemTask = {
+  id: number
+  tasks: GeneralItem[] | ShoppingItem[]
 }
 
 export const store_data = async (data: Store) => {
@@ -45,6 +51,42 @@ export const store_task = async (task: Store) => {
     })
   } catch (error) {
     console.log('[ERROR-STORE-TASK] => ', error)
+  }
+}
+
+export const store_item_task = async (data: StoreItemTask) => {
+  const { id, tasks } = data
+
+  try {
+    let actual_data = await get_data('tasks')
+
+    const new_tasks = actual_data.map((task: Task) => {
+      return task.id === id
+        ? { ...task, items: tasks }
+        : task
+    })
+
+    await store_data({
+      key: 'tasks',
+      value: new_tasks
+    })
+  } catch (error) {
+    console.log('[ERROR-STORE-ITEM-TASK] => ', error)
+  }
+}
+
+export const remove_task = async (id: number) => {
+  try {
+    let actual_data = await get_data('tasks')
+
+    const new_tasks = actual_data.filter((task: Task) => task.id !== id)
+
+    await store_data({
+      key: 'tasks',
+      value: new_tasks
+    })
+  } catch (error) {
+    console.log('[ERROR-REMOVE-TASK] => ', error)
   }
 }
 
