@@ -37,7 +37,11 @@ export default function AddTask() {
 
     const screen = MapCategoryScreen[category_selected] as any
 
-    navigate(screen, { title: task_name })
+    navigate(screen, {
+      id,
+      title: task_name,
+      items: []
+    })
   }
 
   return (
