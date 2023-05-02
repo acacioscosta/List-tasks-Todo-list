@@ -1,66 +1,33 @@
-import { View, Text, TouchableOpacity, Alert } from "react-native";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { StackTypes, TaskGeneralRouteProp } from "../../routes";
+import { Alert } from "react-native";
+import { useRoute } from "@react-navigation/native";
+import { TaskGeneralRouteProp } from "../../routes";
 import { useEffect, useState } from "react";
-import { Ionicons, Feather } from '@expo/vector-icons'
-import styles from "./styles";
 import { GeneralItem } from "../../components/Tasks";
-import ModalAddItem from "../../components/ModalAddItem";
 import { store_item_task } from "../../services/storage";
 import ListItemGeneral from "../../components/ListItemGeneral";
+import BaseTask from "../../components/BaseTask";
 
 export default function TaskGeneral() {
-  const { setOptions, reset } = useNavigation<StackTypes>()
   const { params } = useRoute<TaskGeneralRouteProp>()
 
-  const [description, setDescription] = useState('')
+  let description = ''
   const [tasks, setTasks] = useState<GeneralItem[]>([])
   const [show, setShow] = useState(false)
 
   useEffect(() => {
-    setOptions({
-      title: params?.title || 'Lista utilizada',
-      headerLeft: () => (
-        <TouchableOpacity
-          onPress={() => {
-            reset({
-              index: 0,
-              routes: [{ name: 'Home' }],
-            });
-          }}
-        >
-          <Ionicons
-            name="md-arrow-back"
-            size={24}
-            color={'white'}
-          />
-        </TouchableOpacity>
-      ),
-      headerRight: () => (
-        <TouchableOpacity
-          onPress={() => setShow(true)}
-        >
-          <Feather
-            name="plus-circle"
-            size={26}
-            color={'white'}
-          />
-        </TouchableOpacity>
-      )
-    })
-
     params?.items && setTasks(params.items)
   }, [])
 
   const save = async () => {
     const newData = description
       ? [...tasks, { description, done: false }]
-      : tasks    
+      : tasks
     
-    await setStorage(newData)
+    const tasks_sorted = sortByDone(newData)
+
+    await setStorage(tasks_sorted)
     
-    setTasks(newData)
-    setDescription('')
+    setTasks(tasks_sorted)
     setShow(false)
   }
 
@@ -110,45 +77,45 @@ export default function TaskGeneral() {
     return sorted
   }
 
-  return (
-    <View style={[styles.container, { paddingHorizontal: 20 }]}>
-      <View style={{ marginTop: 20 }}>
+  const showAlert = (item: GeneralItem, index: number) => {
+    Alert.alert(
+      'Remover item',
+      `Deseja remover "${item.description}"`,
+      [
         {
-          tasks.map((item, index) => (
-            <ListItemGeneral
-              key={index}
-              item={item}
-              check={() => check(index)}
-              remove={() => {
-                Alert.alert(
-                  'Remover item',
-                  `Deseja remover "${item.description}"`,
-                  [
-                    {
-                      text: 'Não',
-                      onPress: () => {},
-                      style: 'cancel',
-                    },
-                    {
-                      text: 'SIM',
-                      onPress: () => remove(index)},
-                  ]
-                )
-              }}
-            />
-          ))
-        }
-      </View>
+          text: 'Não',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {
+          text: 'SIM',
+          onPress: () => remove(index)},
+      ]
+    )
+  }
 
-      <ModalAddItem
-        isVisible={show}
-        close={() => {
-          setShow(false)
-          setDescription('')
-        }}
-        onPress={save}
-        onChangeText={(text: string) => setDescription(text)}
-      />
-    </View>
+  return (
+    <BaseTask
+      showModal={() => setShow(true)}
+      isVisible={show}
+      save={save}
+      close={() => {
+        description = ''
+
+        setShow(false)
+      }}
+      onChangeText={(text: string) => description = text}
+    >
+      {
+        tasks.map((item, index) => (
+          <ListItemGeneral
+            key={index}
+            item={item}
+            check={() => check(index)}
+            remove={() => showAlert(item, index)}
+          />
+        ))
+      }
+    </BaseTask>
   )
 }

@@ -7,9 +7,7 @@ type GeneralItem = {
   done: boolean
 }
 
-type ShoppingItem = {
-  description: string
-  done: boolean
+interface ShoppingItem extends GeneralItem {
   amount: number
   value: number
   total: number
