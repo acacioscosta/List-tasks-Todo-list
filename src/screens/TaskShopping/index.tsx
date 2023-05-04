@@ -103,6 +103,57 @@ export default function TaskShopping() {
     )
   }
 
+  const increase = (item: ShoppingItem, index: number) => {
+    const newData = tasks.map((item, i) => {
+      if (i != index) {
+        return item
+      }
+
+      const amount = (item.amount || 0) + 1
+
+      return {
+        ...item,
+        amount,
+        total: amount * item.value
+      }
+    })
+
+    setTasks(newData)
+  }
+
+  const decrease = (item: ShoppingItem, index: number) => {
+    const newData = tasks.map((item, i) => {
+      if (i != index) {
+        return item
+      }
+
+      const amount = (item.amount || 0) - 1
+
+      return {
+        ...item,
+        amount,
+        total: amount * item.value
+      }
+    })
+
+    setTasks(newData)
+  }
+
+  const changeAmount = (amount: number, index: number) => {
+    const newTasks = tasks
+    const { value } = newTasks[index]
+
+    const newAmount = amount || 0
+
+    newTasks[index] = {
+      ...newTasks[index],
+      amount: newAmount,
+      total: newAmount * value
+    }
+
+    setTasks(newTasks)
+  }
+
   return (
     <BaseTask
       showModal={() => setShow(true)}
@@ -122,6 +173,9 @@ export default function TaskShopping() {
             item={item}
             check={() => check(index)}
             remove={() => showAlert(item, index)}
+            increase={() => increase(item, index)}
+            decrease={() => decrease(item, index)}
+            onChangeAmount={(amount: string) => changeAmount(parseInt(amount), index)}
           />
         ))
       }

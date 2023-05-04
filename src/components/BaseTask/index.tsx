@@ -23,7 +23,7 @@ export default function BaseTask(props: Props) {
 
   useEffect(() => {
     setOptions({
-      title: params?.title || 'Lista utilizada',
+      title: params.title.toUpperCase(),
       headerLeft: () => (
         <TouchableOpacity
           onPress={() => {
