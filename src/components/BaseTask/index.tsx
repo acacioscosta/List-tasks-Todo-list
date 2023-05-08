@@ -44,7 +44,7 @@ export default function BaseTask(props: Props) {
         <TouchableOpacity onPress={showModal}>
           <Feather
             name="plus-circle"
-            size={26}
+            size={30}
             color={colors.secondary}
           />
         </TouchableOpacity>
@@ -54,7 +54,7 @@ export default function BaseTask(props: Props) {
 
   return (
     <View style={[styles.container, { paddingHorizontal: 20 }]}>
-      <View style={{ marginTop: 20 }}>
+      <View style={{ marginTop: 0 }}>
         {props.children}
       </View>
 

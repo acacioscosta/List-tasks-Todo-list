@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { TaskShoppingRouteProp } from "../../routes";
 import { useEffect, useState } from "react";
@@ -6,6 +6,7 @@ import { ShoppingItem } from "../../components/Tasks";
 import { store_item_task } from "../../services/storage";
 import ListItemShopping from "../../components/ListItemShopping";
 import BaseTask from "../../components/BaseTask";
+import styles from "./styles";
 
 export default function TaskShopping() {
   const { params } = useRoute<TaskShoppingRouteProp>()
@@ -13,9 +14,14 @@ export default function TaskShopping() {
   let description = ''
   const [tasks, setTasks] = useState<ShoppingItem[]>([])
   const [show, setShow] = useState(false)
+  const [total, setTotal] = useState(0)
 
   useEffect(() => {
-    params?.items && setTasks(params.items)
+    if (params.items) {
+      setTasks(params.items)
+
+      calcTotal(params.items)
+    }
   }, [])
 
   const save = async () => {
@@ -33,10 +39,9 @@ export default function TaskShopping() {
       : tasks
 
     const tasks_sorted = sortByDone(newData)
-    
+
     await setStorage(tasks_sorted)
-    
-    setTasks(tasks_sorted)
+
     setShow(false)
   }
 
@@ -45,6 +50,10 @@ export default function TaskShopping() {
       id: params.id,
       tasks: data
     })
+
+    setTasks(data)
+
+    calcTotal(data)
   }
 
   const check = async (index: number) => {
@@ -57,8 +66,6 @@ export default function TaskShopping() {
     const tasks_sorted = sortByDone(new_tasks)
 
     await setStorage(tasks_sorted)
-
-    setTasks(tasks_sorted)
   }
 
   const remove = async (index: number) => {
@@ -66,8 +73,6 @@ export default function TaskShopping() {
     new_tasks.splice(index, 1)
 
     await setStorage(new_tasks)
-
-    setTasks(new_tasks)
   }
 
   const sortByDone = (tasks: ShoppingItem[]) => {
@@ -75,7 +80,7 @@ export default function TaskShopping() {
       if (a.done === false && b.done === true) {
         return -1;
       }
-      
+
       if (a.done === true && b.done === false) {
         return 1;
       }
@@ -103,7 +108,7 @@ export default function TaskShopping() {
     )
   }
 
-  const increase = (item: ShoppingItem, index: number) => {
+  const increase = async (index: number) => {
     const newData = tasks.map((item, i) => {
       if (i != index) {
         return item
@@ -114,14 +119,14 @@ export default function TaskShopping() {
       return {
         ...item,
         amount,
-        total: amount * item.value
+        total: parseFloat((amount * item.value).toFixed(2))
       }
     })
 
-    setTasks(newData)
+    await setStorage(newData)
   }
 
-  const decrease = (item: ShoppingItem, index: number) => {
+  const decrease = async (index: number) => {
     const newData = tasks.map((item, i) => {
       if (i != index) {
         return item
@@ -132,26 +137,55 @@ export default function TaskShopping() {
       return {
         ...item,
         amount,
-        total: amount * item.value
+        total: parseFloat((amount * item.value).toFixed(2))
       }
     })
 
-    setTasks(newData)
+    await setStorage(newData)
   }
 
-  const changeAmount = (amount: number, index: number) => {
-    const newTasks = tasks
-    const { value } = newTasks[index]
+  const changeAmount = async (amount: string, index: number) => {
+    const newData = tasks.map((item, i) => {
+      if (i != index) {
+        return item
+      }
 
-    const newAmount = amount || 0
+      const newAmount = amount ? parseInt(amount) : 0
 
-    newTasks[index] = {
-      ...newTasks[index],
-      amount: newAmount,
-      total: newAmount * value
+      return {
+        ...item,
+        amount: newAmount,
+        total: parseFloat((newAmount * item.value).toFixed(2))
+      }
+    })
+
+    await setStorage(newData)
+  }
+
+  const changeValue = async (index: number, newValue: number) => {
+    const newData = tasks.map((item, i) => {
+      if (i != index) {
+        return item
+      }
+
+      return {
+        ...item,
+        value: newValue,
+        total: parseFloat((item.amount * newValue).toFixed(2))
+      }
+    })
+
+    await setStorage(newData)
+  }
+
+  const calcTotal = (data?: ShoppingItem[] | undefined) => {
+    let total = 0
+
+    for (const task of data || tasks) {
+      total += task.total
     }
 
-    setTasks(newTasks)
+    setTotal(parseFloat(total.toFixed(2)))
   }
 
   return (
@@ -166,19 +200,28 @@ export default function TaskShopping() {
       }}
       onChangeText={(text: string) => description = text}
     >
-      {
-        tasks.map((item, index) => (
-          <ListItemShopping
-            key={index}
-            item={item}
-            check={() => check(index)}
-            remove={() => showAlert(item, index)}
-            increase={() => increase(item, index)}
-            decrease={() => decrease(item, index)}
-            onChangeAmount={(amount: string) => changeAmount(parseInt(amount), index)}
-          />
-        ))
-      }
+      <View style={styles.view_total}>
+        <Text style={{ color: 'white', fontSize: 18 }}>
+          TOTAL: R$ {total || '0,00'}
+        </Text>
+      </View>
+
+      <ScrollView style={{ marginBottom: 32 }}>
+        {
+          tasks.map((item, index) => (
+            <ListItemShopping
+              key={index}
+              item={item}
+              check={() => check(index)}
+              remove={() => showAlert(item, index)}
+              increase={() => increase(index)}
+              decrease={() => decrease(index)}
+              onChangeAmount={(amount: string) => changeAmount(amount, index)}
+              onChangeValue={(newValue: number) => changeValue(index, newValue)}
+            />
+          ))
+        }
+      </ScrollView>
     </BaseTask>
   )
 }

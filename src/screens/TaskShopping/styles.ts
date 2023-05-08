@@ -9,6 +9,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 28,
     marginVertical: 20
+  },
+
+  view_total: {
+    alignItems: 'center',
+    paddingBottom: 14
   }
 })
 

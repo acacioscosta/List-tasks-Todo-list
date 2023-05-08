@@ -3,14 +3,14 @@ import { colors } from '../../global_styles'
 
 const styles = StyleSheet.create({
   description: {
-    color: 'white',
+    color: colors.secondary,
     fontWeight: '400',
     fontSize: 18,
     marginLeft: 10
   },
 
   done: {
-    color: 'white',
+    color: colors.secondary,
     fontWeight: '400',
     textDecorationLine: 'line-through',
     fontSize: 18,
