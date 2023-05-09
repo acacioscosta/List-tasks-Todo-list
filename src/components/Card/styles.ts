@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.secondary,
     paddingVertical: 2,
     width: 80,
-    borderRadius: 16,
+    borderRadius: 16
   },
 
   text_view_status: {

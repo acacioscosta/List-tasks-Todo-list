@@ -1,5 +1,5 @@
-import React from "react";
-import { View, Text, Alert } from "react-native";
+import React, { useState } from "react";
+import { View, Text, Alert, TouchableOpacity } from "react-native";
 import styles from "./styles";
 import { MapCategoryScreen, MapCategoryTitle } from "../../services/categories";
 import { Task } from "../Tasks";
@@ -7,14 +7,20 @@ import { useNavigation } from "@react-navigation/native";
 import { StackTypes } from "../../routes";
 import CustomPressable from "../Common/Pressable";
 import { remove_task } from "../../services/storage";
+import { MaterialCommunityIcons } from '@expo/vector-icons'
+import ModalTaskOption from "../ModalTaskOption";
 
 type Props = {
   task: Task,
   onRemove: () => void
 }
 
-const Card = ({ task, onRemove }: Props) => {
+const Card = (props: Props) => {
+  const { task, onRemove } = props
+
   const { navigate } = useNavigation<StackTypes>()
+
+  const [isVisible, setVisible] = useState(false)
 
   const getInfo = () => {
     let complete = 0
@@ -42,23 +48,25 @@ const Card = ({ task, onRemove }: Props) => {
     onRemove()
   }
 
+  const removeConfirmation = () => {
+    Alert.alert(
+      'Remover lista',
+      `Deseja remover a lista "${task.description}"?`,
+      [
+        {
+          text: 'NÃO',
+          onPress: () => {},
+          style: 'cancel',
+        },
+        {text: 'SIM', onPress: () => removeTask(task.id)},
+      ]
+    )
+  }
+
   return (
     <CustomPressable
       onPress={() => handleTask(task)}
-      onLongPress={() => (
-        Alert.alert(
-          'Remover lista',
-          `Deseja remover a lista "${task.description}"?`,
-          [
-            {
-              text: 'NÃO',
-              onPress: () => {},
-              style: 'cancel',
-            },
-            {text: 'SIM', onPress: () => removeTask(task.id)},
-          ]
-        )
-      )}
+      onLongPress={removeConfirmation}
       customStyle={styles.container}
     >
       <View>
@@ -67,10 +75,23 @@ const Card = ({ task, onRemove }: Props) => {
             {MapCategoryTitle[task.category]}
           </Text>
 
-          <View style={styles.view_status}>
-            <Text style={styles.text_view_status}>
-              {getInfo()}
-            </Text>
+          <View style={{ flexDirection: 'row' }}>
+            <View style={styles.view_status}>
+              <Text style={styles.text_view_status}>
+                {getInfo()}
+              </Text>
+            </View>
+
+            <TouchableOpacity
+              onPress={() => setVisible(true)}
+              style={{ paddingLeft: 10 }}
+            >
+              <MaterialCommunityIcons
+                name="cog-outline"
+                color={'white'}
+                size={26}
+              />
+            </TouchableOpacity>
           </View>
         </View>
 
@@ -78,6 +99,13 @@ const Card = ({ task, onRemove }: Props) => {
           {task.description}
         </Text>
       </View>
+
+      <ModalTaskOption
+        isVisible={isVisible}
+        close={() => setVisible(false)}
+        onPress={removeConfirmation}
+        task={task}
+      />
     </CustomPressable>
   )
 }
