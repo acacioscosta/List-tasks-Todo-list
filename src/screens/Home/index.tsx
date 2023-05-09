@@ -5,12 +5,16 @@ import ButtonAddTask from "../../components/ButtonAddTask";
 import Tasks, { Task } from "../../components/Tasks";
 import { useEffect, useState } from "react";
 import { get_data } from "../../services/storage";
+import { useNavigation } from "@react-navigation/native";
 
 export default function Home() {
   const [tasks, setTasks] = useState<Task[]>([])
+  const navigation = useNavigation()
 
   useEffect(() => {
-    loadTasksStorage()
+    const unsubscribe = navigation.addListener('focus', async () => await loadTasksStorage())
+
+    return unsubscribe
   }, [])
 
   const loadTasksStorage = async () => {
