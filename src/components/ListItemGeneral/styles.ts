@@ -19,6 +19,7 @@ const styles = StyleSheet.create({
 
   view_item: {
     flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 10,
     padding: 14,
     borderRadius: 8,

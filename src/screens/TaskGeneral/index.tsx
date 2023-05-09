@@ -1,4 +1,4 @@
-import { Alert } from "react-native";
+import { Alert, ScrollView } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { TaskGeneralRouteProp } from "../../routes";
 import { useEffect, useState } from "react";
@@ -106,16 +106,18 @@ export default function TaskGeneral() {
       }}
       onChangeText={(text: string) => description = text}
     >
-      {
-        tasks.map((item, index) => (
-          <ListItemGeneral
-            key={index}
-            item={item}
-            check={() => check(index)}
-            remove={() => showAlert(item, index)}
-          />
-        ))
-      }
+      <ScrollView style={{ marginTop: 14 }}>
+        {
+          tasks.map((item, index) => (
+            <ListItemGeneral
+              key={index}
+              item={item}
+              check={() => check(index)}
+              remove={() => showAlert(item, index)}
+            />
+          ))
+        }
+      </ScrollView>
     </BaseTask>
   )
 }
