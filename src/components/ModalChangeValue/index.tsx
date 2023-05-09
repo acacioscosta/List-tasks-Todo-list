@@ -2,7 +2,7 @@ import CustomModal from '../Common/Modal';
 import { View, Text } from 'react-native';
 import Input from '../Common/Input';
 import Button from '../Common/Button';
-import { Feather } from '@expo/vector-icons'
+import { Feather, MaterialIcons } from '@expo/vector-icons'
 import styles from "./styles";
 import { colors } from "../../global_styles";
 import { ShoppingItem } from '../Tasks';
@@ -15,13 +15,17 @@ type Props = {
   type: 'value' | 'amount'
   onChangeValue?: (value: number) => number
   onChangeText?: (text: string) => string
+  close: () => void
 }
 
 export default function ModalChangeValue(props: Props) {
-  const { isVisible, onPress, item, type, onChangeValue, onChangeText } = props
+  const { isVisible, onPress, item, type, onChangeValue, onChangeText, close } = props
 
   return (
-    <CustomModal isVisible={isVisible}>
+    <CustomModal
+      isVisible={isVisible}
+      close={close}
+    >
       <View style={styles.container}>
         <Text style={styles.title}>
           {item.description.toUpperCase()} - {type === 'value' ? 'Valor Unitário' : 'Quantidade'}
@@ -56,6 +60,22 @@ export default function ModalChangeValue(props: Props) {
           <Feather
             name="upload"
             color={colors.primary}
+            size={24}
+            style={{ marginLeft: 10 }}
+          />
+        </Button>
+
+        <Button
+          label="Fechar"
+          onPress={close}
+          type="secondary"
+          textStyle={{
+            fontSize: 18
+          }}
+        >
+          <MaterialIcons
+            name="cancel"
+            color={colors.secondary}
             size={24}
             style={{ marginLeft: 10 }}
           />

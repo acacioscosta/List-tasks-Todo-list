@@ -77,6 +77,11 @@ export default function ListItemShopping(props: Props) {
             item={item}
             type='value'
             onChangeValue={(value: number) => value_temp = value}
+            close={() => {
+              value_temp = 0
+
+              setShowModalValue(false)
+            }}
           />
         </TouchableOpacity>
 
@@ -121,6 +126,11 @@ export default function ListItemShopping(props: Props) {
               item={item}
               type='amount'
               onChangeText={(text: string) => amount_temp = text || ''}
+              close={() => {
+                amount_temp = ''
+
+                setShowModalAmount(false)
+              }}
             />
           </TouchableOpacity>
           
